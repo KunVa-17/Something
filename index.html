@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Happy Anniversary ❤️</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400&display=swap" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+  overflow:hidden;width:100vw;height:100vh;
+  font-family:'Lato',sans-serif;
+  background:radial-gradient(ellipse at 30% 20%,#1a0a2e 0%,#2d1b4e 40%,#3d2060 70%,#4a2070 100%);
+  transition:background 1.4s ease;
+}
+
+/* ── LOADING SCREEN ── */
+#loadingScreen{
+  position:fixed;inset:0;
+  background:radial-gradient(ellipse at center,#1a0a2e,#0d0520);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  z-index:2000;transition:opacity 1s ease;
+}
+#loadingScreen.hide{opacity:0;pointer-events:none;}
+.loader-heart{font-size:52px;animation:hbeat 1s infinite ease-in-out;margin-bottom:18px;}
+.loader-text{color:rgba(255,255,255,0.75);font-family:'Playfair Display',serif;font-size:20px;letter-spacing:2px;margin-bottom:24px;}
+.loader-bar{width:220px;height:3px;background:rgba(255,255,255,0.1);border-radius:3px;overflow:hidden;}
+.loader-fill{height:100%;background:linear-gradient(90deg,#ff6b9d,#c44d7b);border-radius:3px;width:0%;transition:width 0.4s ease;}
+@keyframes hbeat{0%,100%{transform:scale(1);}50%{transform:scale(1.25);}}
+
+/* ── INTRO SCREEN ── */
+#intro{
+  position:fixed;inset:0;
+  background:radial-gradient(ellipse at center,#fff0f5 0%,#ffd6e7 50%,#ffadc8 100%);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  z-index:1000;transition:opacity 1.5s ease,transform 1.5s ease;
+}
+#intro.hide{opacity:0;pointer-events:none;transform:scale(1.05);}
+#intro h1{
+  font-family:'Playfair Display',serif;font-size:clamp(32px,5vw,64px);
+  color:#b5294e;text-align:center;line-height:1.3;
+  text-shadow:0 2px 20px rgba(181,41,78,0.2);margin-bottom:12px;
+  opacity:0;transform:translateY(30px);
+}
+#intro p{
+  font-weight:300;font-size:clamp(14px,2vw,20px);color:#c96283;
+  letter-spacing:3px;text-transform:uppercase;margin-bottom:50px;
+  opacity:0;transform:translateY(20px);
+}
+#startBtn{
+  background:linear-gradient(135deg,#ff6b9d,#c44d7b);color:white;border:none;
+  padding:16px 48px;border-radius:50px;font-family:'Playfair Display',serif;
+  font-size:18px;cursor:pointer;box-shadow:0 8px 30px rgba(196,77,123,0.4);
+  transition:transform 0.3s,box-shadow 0.3s;opacity:0;transform:translateY(20px);
+}
+#startBtn:hover{transform:translateY(-3px) scale(1.05);box-shadow:0 14px 40px rgba(196,77,123,0.5);}
+.heart-float{position:absolute;font-size:24px;animation:floatHeart 6s infinite ease-in-out;opacity:0.6;}
+
+/* ── CANVAS ── */
+#canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:1;}
+
+/* ── MAIN UI ── */
+#ui{
+  position:fixed;inset:0;z-index:10;pointer-events:none;
+  display:flex;flex-direction:column;align-items:center;padding:24px 20px;
+}
+#title{
+  font-family:'Playfair Display',serif;font-size:clamp(22px,3.5vw,46px);
+  color:white;text-shadow:0 2px 20px rgba(0,0,0,0.5);
+  text-align:center;margin-bottom:10px;line-height:1.3;
+}
+#subtitle-date{
+  font-size:clamp(11px,1.5vw,14px);color:rgba(255,255,255,0.75);
+  letter-spacing:4px;text-transform:uppercase;font-weight:300;
+  margin-bottom:18px;text-align:center;
+}
+.btn-row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;pointer-events:all;margin-bottom:12px;}
+.btn{
+  padding:9px 20px;border:1.5px solid rgba(255,255,255,0.4);border-radius:40px;
+  background:rgba(255,255,255,0.1);backdrop-filter:blur(12px);color:white;
+  cursor:pointer;font-family:'Lato',sans-serif;font-size:13px;
+  transition:all 0.3s;white-space:nowrap;
+}
+.btn:hover{background:rgba(255,255,255,0.22);transform:translateY(-2px);}
+.btn.active{background:rgba(255,255,255,0.25);border-color:rgba(255,255,255,0.8);}
+#revealBtn{
+  background:linear-gradient(135deg,rgba(255,107,157,0.7),rgba(196,77,123,0.7));
+  border-color:rgba(255,150,180,0.8);font-size:14px;padding:13px 30px;
+  pointer-events:all;margin-bottom:80px;
+  box-shadow:0 4px 20px rgba(196,77,123,0.4);
+}
+#revealBtn:hover{background:linear-gradient(135deg,rgba(255,107,157,0.9),rgba(196,77,123,0.9));transform:translateY(-3px) scale(1.03);}
+#modeIndicator{
+  background:rgba(255,255,255,0.1);backdrop-filter:blur(8px);
+  border:1px solid rgba(255,255,255,0.2);border-radius:20px;
+  padding:5px 16px;color:rgba(255,255,255,0.85);font-size:11px;
+  letter-spacing:1px;text-transform:uppercase;margin-bottom:14px;
+}
+
+/* ── STATS ── */
+#stats{
+  position:fixed;bottom:0;left:0;right:0;
+  display:flex;justify-content:center;gap:16px;padding:14px 20px;
+  background:linear-gradient(to top,rgba(0,0,0,0.4) 0%,transparent 100%);
+  pointer-events:none;
+}
+.stat-box{
+  background:rgba(255,255,255,0.08);backdrop-filter:blur(10px);
+  border:1px solid rgba(255,255,255,0.18);border-radius:16px;
+  padding:10px 18px;text-align:center;min-width:85px;
+}
+.stat-label{color:rgba(255,255,255,0.6);font-size:10px;letter-spacing:2px;text-transform:uppercase;display:block;margin-bottom:4px;}
+.stat-num{color:white;font-family:'Playfair Display',serif;font-size:24px;font-weight:700;line-height:1;}
+.stat-num.pulse{animation:statPulse 0.5s ease;}
+
+/* ── POPUP ── */
+#popup{
+  position:fixed;left:50%;top:50%;
+  transform:translate(-50%,-50%) scale(0.8);
+  background:rgba(10,5,30,0.75);backdrop-filter:blur(24px);
+  border:1.5px solid rgba(255,180,220,0.5);border-radius:28px;
+  padding:36px 44px;color:white;text-align:center;z-index:50;
+  max-width:min(560px,90vw);width:100%;pointer-events:all;opacity:0;
+  box-shadow:0 20px 80px rgba(180,50,100,0.3);
+}
+#popup.show{animation:popupIn 0.6s cubic-bezier(0.175,0.885,0.32,1.275) forwards;}
+#popup.hide{animation:popupOut 0.3s ease forwards;}
+#popupReasonNum{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,180,200,0.8);margin-bottom:16px;}
+#popupText{font-family:'Playfair Display',serif;font-size:clamp(18px,3vw,26px);line-height:1.6;color:white;margin-bottom:22px;}
+#popupClose{
+  background:rgba(255,100,150,0.2);border:1px solid rgba(255,150,180,0.5);
+  border-radius:30px;color:white;padding:9px 26px;cursor:pointer;font-size:13px;transition:background 0.2s;
+}
+#popupClose:hover{background:rgba(255,100,150,0.4);}
+
+/* ── SPARKLES / HEARTS ── */
+.sparkle{position:fixed;pointer-events:none;z-index:40;font-size:22px;animation:sparkleAnim 1.2s ease forwards;}
+.float-heart{position:fixed;pointer-events:none;z-index:5;font-size:20px;animation:floatUp 4s ease forwards;opacity:0;}
+
+/* ── BG PANEL ── */
+#bgPanel{
+  position:fixed;right:18px;top:50%;transform:translateY(-50%);
+  display:flex;flex-direction:column;gap:10px;z-index:20;
+  pointer-events:all;opacity:0;transition:opacity 0.3s;
+}
+#bgPanel.visible{opacity:1;}
+.bg-swatch{
+  width:34px;height:34px;border-radius:50%;cursor:pointer;
+  border:2px solid rgba(255,255,255,0.4);transition:transform 0.2s;
+  box-shadow:0 2px 10px rgba(0,0,0,0.3);
+}
+.bg-swatch:hover{transform:scale(1.2);border-color:white;}
+.bg-swatch.active{border-color:white;transform:scale(1.1);box-shadow:0 0 0 3px rgba(255,255,255,0.3);}
+
+/* ── MUSIC DOT ── */
+#musicDot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.6);display:inline-block;margin-left:6px;vertical-align:middle;}
+#musicDot.playing{animation:beatDot 0.8s infinite ease-in-out;}
+
+/* ── KEYFRAMES ── */
+@keyframes floatHeart{0%,100%{transform:translateY(0) rotate(-10deg);}50%{transform:translateY(-20px) rotate(10deg);}}
+@keyframes popupIn{0%{opacity:0;transform:translate(-50%,-50%) scale(0.7);}100%{opacity:1;transform:translate(-50%,-50%) scale(1);}}
+@keyframes popupOut{0%{opacity:1;transform:translate(-50%,-50%) scale(1);}100%{opacity:0;transform:translate(-50%,-50%) scale(0.8);}}
+@keyframes sparkleAnim{0%{opacity:1;transform:scale(0) rotate(0deg);}50%{opacity:1;transform:scale(1.5) rotate(180deg);}100%{opacity:0;transform:scale(0.5) rotate(360deg) translateY(-60px);}}
+@keyframes floatUp{0%{opacity:0.8;transform:translateY(0) scale(1);}100%{opacity:0;transform:translateY(-120px) scale(0.5);}}
+@keyframes statPulse{0%{transform:scale(1);}50%{transform:scale(1.3);color:#ffb3cc;}100%{transform:scale(1);}}
+@keyframes beatDot{0%,100%{transform:scale(1);opacity:0.6;}50%{transform:scale(1.8);opacity:1;}}
+
+@media(max-width:480px){
+  .btn{padding:8px 14px;font-size:12px;}#revealBtn{padding:11px 22px;}
+  .stat-box{padding:8px 12px;min-width:70px;}.stat-num{font-size:20px;}
+  #bgPanel{right:8px;}#popup{padding:24px 18px;}
+}
+</style>
+  <script type="module" crossorigin src="/Something/assets/index-V1z85rOP.js"></script>
+</head>
+<body>
+
+<!-- LOADING -->
+<div id="loadingScreen">
+  <div class="loader-heart">💖</div>
+  <div class="loader-text">Preparing your gift...</div>
+  <div class="loader-bar"><div class="loader-fill" id="loaderFill"></div></div>
+</div>
+
+<!-- INTRO -->
+<div id="intro">
+  <span class="heart-float" style="top:10%;left:8%;animation-delay:0s">💕</span>
+  <span class="heart-float" style="top:15%;right:10%;animation-delay:1s">🌸</span>
+  <span class="heart-float" style="bottom:20%;left:12%;animation-delay:2s">✨</span>
+  <span class="heart-float" style="bottom:25%;right:8%;animation-delay:0.5s">💖</span>
+  <span class="heart-float" style="top:40%;left:3%;animation-delay:1.5s">🌺</span>
+  <span class="heart-float" style="top:50%;right:3%;animation-delay:3s">💗</span>
+  <h1>Happy 1 Year<br/>Anniversary ❤️</h1>
+  <p>One beautiful year together</p>
+  <button id="startBtn">Open Your Gift ✨</button>
+</div>
+
+<canvas id="canvas"></canvas>
+
+<!-- MAIN UI -->
+<div id="ui">
+  <div id="title">Happy Anniversary, My Love ❤️</div>
+  <div id="subtitle-date">One magical year together</div>
+  <div class="btn-row">
+    <button class="btn active" id="modeBtn" onclick="toggleMode()">🔄 Rotate Mode</button>
+    <button class="btn" id="bgToggleBtn" onclick="toggleBgPanel()">🎨 Background</button>
+    <button class="btn" id="musicBtn" onclick="toggleMusic()">🎵 Music <span id="musicDot"></span></button>
+  </div>
+  <div id="modeIndicator">Mode: Free Rotate — Drag to spin!</div>
+  <div style="flex:1"></div>
+  <button class="btn" id="revealBtn" onclick="revealReason()">💝 Shake to Reveal a Reason</button>
+</div>
+
+<!-- STATS -->
+<div id="stats">
+  <div class="stat-box"><span class="stat-label">Revealed</span><span class="stat-num" id="revealedNum">0</span></div>
+  <div class="stat-box"><span class="stat-label">Remaining</span><span class="stat-num" id="remainingNum">108</span></div>
+  <div class="stat-box"><span class="stat-label">Total</span><span class="stat-num" id="totalNum">108</span></div>
+</div>
+
+<!-- POPUP -->
+<div id="popup">
+  <div id="popupReasonNum">Reason #1</div>
+  <div id="popupText">I love you ❤️</div>
+  <button id="popupClose" onclick="closePopup()">Close ✕</button>
+</div>
+
+<!-- BG PANEL -->
+<div id="bgPanel">
+  <div class="bg-swatch active" style="background:linear-gradient(135deg,#1a0a2e,#4a2070)" onclick="setBg(0)" title="Night Bloom"></div>
+  <div class="bg-swatch" style="background:linear-gradient(135deg,#ffdde1,#ee9ca7)" onclick="setBg(1)" title="Pink Dream"></div>
+  <div class="bg-swatch" style="background:linear-gradient(135deg,#0f2027,#2c5364)" onclick="setBg(2)" title="Starry Night"></div>
+  <div class="bg-swatch" style="background:linear-gradient(135deg,#f7971e,#ffd200)" onclick="setBg(3)" title="Sunset"></div>
+  <div class="bg-swatch" style="background:linear-gradient(135deg,#050510,#1a1a4a)" onclick="setBg(4)" title="Deep Space"></div>
+  <div class="bg-swatch" style="background:linear-gradient(135deg,#134e5e,#71b280)" onclick="setBg(5)" title="Aurora"></div>
+</div>
+
+</body>
+</html>
